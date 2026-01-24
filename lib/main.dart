@@ -1,16 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_list/page_to_show_provider.dart';
 import 'package:todo_list/stats_page.dart';
 import 'package:todo_list/lists_page.dart';
+import 'package:todo_list/tasks_page.dart';
 import 'package:todo_list/tasks_provider.dart';
 
-void main() {
-  runApp(
+void main() async {
+  /*runApp(
     ChangeNotifierProvider(
       create: (_) => TasksProvider(),
       child: const MyApp(),
     )
+  );*/
+
+  await Hive.initFlutter();
+  await Hive.openBox("todoBox");
+
+  //WidgetsFlutterBinding.ensureInitialized();
+  // await Hive.initFlutter();
+  // await Hive.openBox('todoBox');
+  // Hive.box('todoBox').clear();
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => TasksProvider()),
+        ChangeNotifierProvider(create: (_) => PageToShowProvider()),
+      ],
+      child: const MyApp(),
+    ),
   );
 }
 
@@ -37,25 +59,29 @@ class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
 
-  static const List<Tab> tabs = [
-    Tab(text: "Liste"),
-    Tab(text: "Stats")
-  ];
-
   @override
   Widget build(BuildContext context) {
+    String page = Provider.of<PageToShowProvider>(context).page;
+    int? listIndex = Provider.of<PageToShowProvider>(context).index;
+    String? listName = Provider.of<PageToShowProvider>(context).listName;
+
+    List<Tab> tabs = [
+      Tab(text: page),
+      Tab(text: "Stats")
+    ];
+
     return DefaultTabController(
       length: tabs.length,
       child: Scaffold(
         appBar: AppBar(
-          bottom: const TabBar(
+          bottom: TabBar(
             tabs: tabs,
           ),
         ),
         body: SafeArea(
           child: TabBarView(
             children: [
-              ListsPage(),
+              page == "Lists" ? ListsPage() : TasksPage(index: listIndex!, name: listName!),
               StatsPage()
             ],
           ),
