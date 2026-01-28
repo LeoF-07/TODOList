@@ -20,10 +20,10 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox("todoBox");
 
-  //WidgetsFlutterBinding.ensureInitialized();
-  // await Hive.initFlutter();
-  // await Hive.openBox('todoBox');
-  // Hive.box('todoBox').clear();
+  /*WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  await Hive.openBox('todoBox');
+  Hive.box('todoBox').clear();*/
 
   runApp(
     MultiProvider(

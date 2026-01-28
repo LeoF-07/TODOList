@@ -8,48 +8,155 @@ import 'package:provider/provider.dart';
 class ListsPage extends StatelessWidget{
   const ListsPage({super.key});
 
+  void deleteAList(BuildContext context, int index) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Conferma eliminazione"),
+          content: Text("Sei sicuro di voler cancellare questa lista?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("Annulla"),
+            ),
+            TextButton(
+              onPressed: () {
+                context.read<TasksProvider>().deleteAList(index);
+                Navigator.pop(context);
+              },
+              child: Text(
+                "Elimina",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void addAList(BuildContext context) {
+    final TextEditingController controller = TextEditingController();
+    bool isError = false;
+    String label = "Nome della lista";
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text("Nuova lista"),
+              content: TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  labelText: label,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: isError ? Colors.red : Colors.grey,
+                      width: 2,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: isError ? Colors.red : Colors.blue,
+                      width: 2,
+                    ),
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text("Annulla"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    final name = controller.text.trim();
+
+                    if (name.isEmpty) {
+                      setState(() => isError = true);
+                      return;
+                    }else{
+                      if(!context.read<TasksProvider>().addAList(name)){
+                        setState(() {isError = true; label = "Lista già esistente"; controller.text = "";});
+                        return;
+                      }
+
+                    }
+                    Navigator.pop(context);
+                  },
+                  child: Text("Aggiungi"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     final lists = Provider.of<TasksProvider>(context).lists;
 
-    List<Container> buttonLists = [];
+    List<GestureDetector> buttonLists = [];
     for(int i = 0; i < lists.length; i++){
-      buttonLists.add(Container(
-        margin: EdgeInsets.all(5.w),
-        width: 30.w,
-        height: 100.h,
-        decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
-        child: GestureDetector(
-            onTap: () => context.read<PageToShowProvider>().showTasks(i, lists[i].name),
-            child: Padding(
-                padding: EdgeInsets.only(top: 10.h, left: 10.w),
-                child: Text(lists[i].name))
-        )),
+      buttonLists.add(
+          GestureDetector(
+              onTap: () => context.read<PageToShowProvider>().showTasks(i, lists[i].name),
+              child: Container(
+                margin: EdgeInsets.all(5.w),
+                width: 30.w,
+                height: 100.h,
+                decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
+                child: Padding(
+                  padding: EdgeInsets.only(top: 10.h, left: 10.w),
+                  child: Stack(
+                    children: [
+                      Text(lists[i].name),
+                      Positioned(
+                        bottom: 1.h,
+                        right: 1.w,
+                        child: IconButton(onPressed: () => deleteAList(context, i), icon: Icon(Icons.dangerous_outlined)),
+                      )
+                    ],
+                ),
+              )
+            )
+          )
       );
     }
 
     return SafeArea(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: 520.h),
-        child: GridView.count(
-          padding: EdgeInsets.symmetric(horizontal: 10.w),
-          crossAxisCount: 3,
-          children: buttonLists,
-        ),
+      child: Stack(
+        children: [
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: 600.h),
+            child: Container(
+              padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 20.h),
+              margin: EdgeInsets.only(top: 20.h),
+              decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
+              child: GridView.count(
+                crossAxisCount: 3,
+                children: buttonLists,
+              ),
+            )
+          ),
+          Positioned(
+            bottom: 50.h,
+            right: 40.w,
+            child: FloatingActionButton(
+              onPressed: () => addAList(context),
+              child: Icon(Icons.add),
+            ),
+          )
+        ],
       )
     );
   }
-
-    /*List<TableRow> rows = [];
-    int numberOfListPerRow = 3;
-    int j = 0;
-    for(int i = 0; i < (lists.length / numberOfListPerRow).floor(); i++, j += numberOfListPerRow){
-      rows.add(TableRow(children: buttonLists.sublist(j, j + numberOfListPerRow)));
-    }
-    List<Container> lastRow = buttonLists.sublist(j, j + lists.length % numberOfListPerRow);
-    while(lastRow.length < numberOfListPerRow){
-      lastRow.add(Container());
-    }
-    rows.add(TableRow(children: lastRow));*/
 
 }

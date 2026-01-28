@@ -58,40 +58,52 @@ class TasksPage extends StatelessWidget{
     }
 
     return SafeArea(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 520.h),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 10.w),
-            child: Column(
-              children: [
-                SizedBox(
-                  width: 100.sw,
-                  height: 100.h,
-                  child: Stack(
-                    alignment: Alignment.center,
+        child: Stack(
+          children: [
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: 600.h),
+              child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: 10.w),
+                  child: Column(
                     children: [
-                      Positioned(
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: IconButton(
-                              icon: Icon(Icons.arrow_back_rounded, size: 30.w),
-                              onPressed: () => context.read<PageToShowProvider>().showLists(),
+                      SizedBox(
+                        width: 100.sw,
+                        height: 100.h,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Positioned(
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: IconButton(
+                                    icon: Icon(Icons.arrow_back_rounded, size: 30.w),
+                                    onPressed: () => context.read<PageToShowProvider>().showLists(),
+                                  ),
+                                )
                             ),
-                          )
+                            Container(
+                              width: 200.w, // = double.infinity
+                              margin: EdgeInsets.symmetric(vertical: 20.h),
+                              decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
+                              child: Center(child: Text(name)),
+                            )
+                          ],
+                        ),
                       ),
-                      Container(
-                        width: 200.w, // = double.infinity
-                        margin: EdgeInsets.symmetric(vertical: 20.h),
-                        decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
-                        child: Center(child: Text(name)),
-                      )
+                      ...rowTasks
                     ],
-                  ),
-                ),
-                ...rowTasks
-              ],
+                  )
+              ),
+            ),
+            Positioned(
+              bottom: 50.h,
+              right: 40.w,
+              child: FloatingActionButton(
+                onPressed: () {},
+                child: Icon(Icons.add),
+              ),
             )
-          ),
+          ],
         )
     );
   }
