@@ -131,31 +131,27 @@ class ListsPage extends StatelessWidget{
       );
     }
 
-    return SafeArea(
-      child: Stack(
-        children: [
-          ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: 600.h),
-            child: Container(
-              padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 20.h),
-              margin: EdgeInsets.only(top: 20.h),
-              decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
-              child: GridView.count(
-                crossAxisCount: 3,
-                children: buttonLists,
-              ),
-            )
+    return Stack(
+      children: [
+        Container(
+          constraints: BoxConstraints(maxHeight: 600.h),
+          padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 10.h),
+          margin: EdgeInsets.only(top: 20.h, left: 20.w, right: 20.w),
+          decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
+          child: GridView.count(
+            crossAxisCount: 3,
+            children: buttonLists,
           ),
-          Positioned(
-            bottom: 50.h,
-            right: 40.w,
-            child: FloatingActionButton(
-              onPressed: () => addAList(context),
-              child: Icon(Icons.add),
-            ),
-          )
-        ],
-      )
+        ),
+        Positioned(
+          bottom: 50.h,
+          right: 40.w,
+          child: FloatingActionButton(
+            onPressed: () => addAList(context),
+            child: Icon(Icons.add),
+          ),
+        )
+      ],
     );
   }
 

@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list/page_to_show_provider.dart';
+import 'package:todo_list/single_stats_page.dart';
 import 'package:todo_list/stats_page.dart';
 import 'package:todo_list/lists_page.dart';
 import 'package:todo_list/tasks_page.dart';
@@ -61,9 +62,10 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String page = Provider.of<PageToShowProvider>(context).page;
-    int? listIndex = Provider.of<PageToShowProvider>(context).index;
-    String? listName = Provider.of<PageToShowProvider>(context).listName;
+    final provider = Provider.of<PageToShowProvider>(context);
+    String page = provider.page;
+    int? listIndex = provider.index;
+    String? listName = provider.listName;
 
     List<Tab> tabs = [
       Tab(text: page),
@@ -80,10 +82,17 @@ class MyHomePage extends StatelessWidget {
         ),
         body: SafeArea(
           child: TabBarView(
-            children: [
-              page == "Lists" ? ListsPage() : TasksPage(index: listIndex!, name: listName!),
+            children: page == "Lists" ? [
+              ListsPage(),
               StatsPage()
-            ],
+            ] : [
+              TasksPage(index: listIndex!, name: listName!),
+              SingleStatsPage(index: listIndex!, name: listName!)
+            ]
+            /*[
+              page == "Lists" ? ListsPage() : TasksPage(index: listIndex!, name: listName!),
+              page == "Lists" ? StatsPage() : SingleStatsPage(index: listIndex!, name: listName!)
+            ],*/
           ),
         ),
       ),
