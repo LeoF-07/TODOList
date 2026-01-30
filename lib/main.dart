@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: Size(412, 915),
       builder: (_, child) => MaterialApp (
-          title: 'Flutter Demo',
+          title: 'ToDo List',
           theme: ThemeData(
             //colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
@@ -55,11 +55,11 @@ class MyApp extends StatelessWidget {
               unselectedLabelColor: Colors.black,
               indicatorColor: Colors.black,
             ),
-            appBarTheme: AppBarTheme(backgroundColor: Colors.green[200])
+            appBarTheme: AppBarTheme(backgroundColor: Colors.green[200]),
           ),
           home: child
       ),
-      child: const MyHomePage(title: 'Flutter Demo Home Page'),
+      child: const MyHomePage(title: 'ToDo List'),
     );
   }
 }
@@ -84,7 +84,7 @@ class MyHomePage extends StatelessWidget {
       length: tabs.length,
       child: Scaffold(
         appBar: AppBar(
-          title: Center(child: Text("ToDo List")),
+          title: Center(child: Padding(padding: EdgeInsets.only(top: 10.h), child: Text("ToDo List", style: TextStyle(fontFamily: 'Pacifico')))),
           bottom: TabBar(
             tabs: tabs,
           ),

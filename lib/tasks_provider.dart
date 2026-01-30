@@ -38,6 +38,27 @@ class TasksProvider extends ChangeNotifier{
     return true;
   }
 
+  bool renameList(String name, int index){
+    for(ListOfTasks list in lists){
+      if(list.name == name){
+        return false;
+      }
+    }
+
+    int oldNumberOfTasks = mapNumberOfTasks[lists[index].name]!;
+    int oldCompletedTasks = mapCompletedTasks[lists[index].name]!;
+    mapNumberOfTasks.remove(lists[index].name);
+    mapCompletedTasks.remove(lists[index].name);
+
+    lists[index].name = name;
+
+    mapNumberOfTasks[lists[index].name] = oldNumberOfTasks;
+    mapCompletedTasks[lists[index].name] = oldCompletedTasks;
+
+    notifyListeners();
+    return true;
+  }
+
   bool addAList(String name, {List<Task>? tasks}){
     for(ListOfTasks list in lists){
       if(list.name == name){
@@ -56,6 +77,8 @@ class TasksProvider extends ChangeNotifier{
   void deleteAList(int index){
     final box = Hive.box('todoBox');
     box.delete(lists[index].name);
+    numberOfTasks -= mapNumberOfTasks[lists[index].name]!;
+    completedTasks -= mapCompletedTasks[lists[index].name]!;
     mapNumberOfTasks.remove(lists[index].name);
     mapCompletedTasks.remove(lists[index].name);
     lists.removeAt(index);
@@ -90,12 +113,7 @@ class TasksProvider extends ChangeNotifier{
     final box = Hive.box('todoBox');
 
     if (box.isEmpty) {
-      addAList("Default", tasks: [
-        Task(description: "Clean the bedroom"),
-        Task(description: "Do the laundry")
-      ]);
-      addAList("A");
-      addAList("B");
+      addAList("List 1");
       saveLists();
     } else {
       lists = box.values.map((m) => ListOfTasks.fromMap(m as Map)).toList();

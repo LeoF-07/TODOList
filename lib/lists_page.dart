@@ -30,6 +30,67 @@ class ListsPageState extends State<ListsPage>{
     Utils.askConfirm(context, "Sei sicuro di voler cancellare questa lista?", () => context.read<TasksProvider>().deleteAList(index));
   }
 
+  void changeName(BuildContext context, int i){
+    final TextEditingController controller = TextEditingController();
+    bool isError = false;
+    String label = "Nome della lista";
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text("Rinomina"),
+              content: TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  labelText: label,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: isError ? Colors.red : Colors.grey,
+                      width: 2,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: isError ? Colors.red : Colors.blue,
+                      width: 2,
+                    ),
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text("Annulla"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    final name = controller.text.trim();
+
+                    if (name.isEmpty) {
+                      setState(() => isError = true);
+                      return;
+                    }else{
+                      if(!context.read<TasksProvider>().renameList(name, i)){
+                        setState(() {isError = true; label = "Lista già esistente"; controller.text = "";});
+                        return;
+                      }
+
+                    }
+                    Navigator.pop(context);
+                  },
+                  child: Text("Rinomina"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   void addAList(BuildContext context) {
     final TextEditingController controller = TextEditingController();
     bool isError = false;
@@ -125,6 +186,12 @@ class ListsPageState extends State<ListsPage>{
                     ),
                     Positioned(
                       bottom: 1.h,
+                      right: 15.w,
+                      //child: IconButton(onPressed: () => deleteAList(context, i), icon: Icon(Icons.dangerous_outlined)),
+                      child: IconButton(onPressed: () => changeName(context, i), icon: Icon(Icons.create_sharp), iconSize: 20.w),
+                    ),
+                    Positioned(
+                      bottom: 1.h,
                       right: -10.w,
                       //child: IconButton(onPressed: () => deleteAList(context, i), icon: Icon(Icons.dangerous_outlined)),
                       child: IconButton(onPressed: () => deleteAList(context, i), icon: Icon(Icons.close)),
@@ -141,7 +208,7 @@ class ListsPageState extends State<ListsPage>{
     return Stack(
       children: [
         Container(
-          constraints: BoxConstraints(maxHeight: 600.h),
+          constraints: BoxConstraints(maxHeight: 590.h),
           padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 10.h),
           margin: EdgeInsets.only(top: 20.h, left: 20.w, right: 20.w),
           decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.black), borderRadius: BorderRadius.circular(10.w)),

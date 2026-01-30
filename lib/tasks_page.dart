@@ -214,7 +214,7 @@ class TasksPage extends StatelessWidget{
               ),
             ),
             rowTasks.isNotEmpty ? Container(
-              constraints: BoxConstraints(minHeight: 500.h),
+              constraints: BoxConstraints(minHeight: 510.h),
               margin: EdgeInsets.symmetric(horizontal: 20.w),
               decoration: BoxDecoration(
                   border: BoxBorder.all(width: 2.w, color: Colors.black),

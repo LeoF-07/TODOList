@@ -56,13 +56,21 @@ class StatsPage extends StatelessWidget{
       );
     }
 
+    if(totalTasks == 0){
+      return Align(alignment: Alignment.topCenter, child: Padding(padding: EdgeInsets.only(top: 330.h), child: Text("Add a task in a list to view stats")));
+    }
+
     return Column(
       children: [
         Utils.generalStats(totalTasks, completedTasks, tasksToSolve, percentage),
+        Align(
+          alignment: Alignment.center,
+          child: Text("Overview", style: Utils.textStyle),
+        ),
         Container(
-          constraints: BoxConstraints(maxHeight: 500.h),
+          constraints: BoxConstraints(maxHeight: 480.h),
           padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 10.h),
-          margin: EdgeInsets.symmetric(horizontal: 20.w),
+          margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
           decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Utils.statsBorderColor), borderRadius: BorderRadius.circular(10.w), color: Utils.statsColor),
           child: Column(
               children: rowLists
