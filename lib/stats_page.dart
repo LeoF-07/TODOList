@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list/tasks_provider.dart';
+import 'package:todo_list/utils.dart';
 
 class StatsPage extends StatelessWidget{
   const StatsPage({super.key});
@@ -27,13 +28,14 @@ class StatsPage extends StatelessWidget{
             child: Row(
               children: [
                 SizedBox(width: 5.w),
-                Icon(Icons.circle, size: 10.w, color: Colors.blue),
+                Icon(Icons.circle, size: 10.w, color: Utils.pointColor),
                 SizedBox(width: 5.w),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.only(left: 20.w),
                     child: Text(
                       provider.lists[i].name,
+                      style: Utils.textStyle,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -44,7 +46,7 @@ class StatsPage extends StatelessWidget{
                     padding: EdgeInsets.only(right: 20.w),
                     child: Align(
                       alignment: Alignment.centerRight,
-                      child: numberOfTasks != 0 ? Text('$completedTasks/$numberOfTasks      ${(completedTasks / numberOfTasks * 100).toStringAsFixed(1)}%',) : Text('Empty List'),
+                      child: numberOfTasks != 0 ? Text('$completedTasks/$numberOfTasks      ${(completedTasks / numberOfTasks * 100).toStringAsFixed(1)}%', style: Utils.textStyle) : Text('Empty List'),
                     ),
                   ),
                 ),
@@ -56,44 +58,12 @@ class StatsPage extends StatelessWidget{
 
     return Column(
       children: [
-        Container(
-            width: 1.sw,
-            padding: EdgeInsets.all(10.w),
-            margin: EdgeInsets.symmetric(vertical: 20.h, horizontal: 70.w),
-            decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
-            child: Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 10.h,
-                  children: [
-                    Text('Total Tasks:'),
-                    Text('Completed Tasks:'),
-                    Text('Tasks to solve:'),
-                    Text('Percentage:'),
-                  ],
-                ),
-
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    spacing: 10.h,
-                    children: [
-                      Text(totalTasks.toString()),
-                      Text(completedTasks.toString()),
-                      Text(tasksToSolve.toString()),
-                      Text('$percentage%')
-                    ],
-                  ),
-                ),
-              ],
-            )
-        ),
+        Utils.generalStats(totalTasks, completedTasks, tasksToSolve, percentage),
         Container(
           constraints: BoxConstraints(maxHeight: 500.h),
           padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 10.h),
           margin: EdgeInsets.symmetric(horizontal: 20.w),
-          decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
+          decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Utils.statsBorderColor), borderRadius: BorderRadius.circular(10.w), color: Utils.statsColor),
           child: Column(
               children: rowLists
           )

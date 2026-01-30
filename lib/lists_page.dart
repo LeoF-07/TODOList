@@ -4,36 +4,30 @@ import 'package:todo_list/page_to_show_provider.dart';
 import 'package:todo_list/tasks_page.dart';
 import 'package:todo_list/tasks_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_list/utils.dart';
 
-class ListsPage extends StatelessWidget{
+class ListsPage extends StatefulWidget{
   const ListsPage({super.key});
 
+  @override
+  State<StatefulWidget> createState() => ListsPageState();
+
+}
+
+class ListsPageState extends State<ListsPage>{
+
+  Icon largeGrid = Icon(Icons.grid_on_sharp);
+  Icon smallGrid = Icon(Icons.grid_view);
+  int iconUsed = 0;
+
+  void changeIcon(){
+    setState(() {
+      iconUsed = 1 - iconUsed;
+    });
+  }
+
   void deleteAList(BuildContext context, int index) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text("Conferma eliminazione"),
-          content: Text("Sei sicuro di voler cancellare questa lista?"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text("Annulla"),
-            ),
-            TextButton(
-              onPressed: () {
-                context.read<TasksProvider>().deleteAList(index);
-                Navigator.pop(context);
-              },
-              child: Text(
-                "Elimina",
-                style: TextStyle(color: Colors.red),
-              ),
-            ),
-          ],
-        );
-      },
-    );
+    Utils.askConfirm(context, "Sei sicuro di voler cancellare questa lista?", () => context.read<TasksProvider>().deleteAList(index));
   }
 
   void addAList(BuildContext context) {
@@ -97,8 +91,6 @@ class ListsPage extends StatelessWidget{
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final lists = Provider.of<TasksProvider>(context).lists;
@@ -109,22 +101,39 @@ class ListsPage extends StatelessWidget{
           GestureDetector(
               onTap: () => context.read<PageToShowProvider>().showTasks(i, lists[i].name),
               child: Container(
-                padding: EdgeInsets.only(top: 10.h, left: 10.w),
+                padding: EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
                 margin: EdgeInsets.all(5.w),
                 width: 30.w,
                 height: 100.h,
-                decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
+                decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Utils.listBorderColor), borderRadius: BorderRadius.circular(10.w), color: Utils.listColor),
+
                 child: Stack(
                   children: [
-                    Text(lists[i].name),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            lists[i].name,
+                            style: Utils.textStyle,
+                            maxLines: iconUsed == 0 ? 2 : 4,
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
+                          ),
+                        ),
+                      ],
+                    ),
                     Positioned(
                       bottom: 1.h,
-                      right: 1.w,
-                      child: IconButton(onPressed: () => deleteAList(context, i), icon: Icon(Icons.dangerous_outlined)),
+                      right: -10.w,
+                      //child: IconButton(onPressed: () => deleteAList(context, i), icon: Icon(Icons.dangerous_outlined)),
+                      child: IconButton(onPressed: () => deleteAList(context, i), icon: Icon(Icons.close)),
                     )
                   ],
                 ),
-            )
+
+
+              )
           )
       );
     }
@@ -135,10 +144,19 @@ class ListsPage extends StatelessWidget{
           constraints: BoxConstraints(maxHeight: 600.h),
           padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 10.h),
           margin: EdgeInsets.only(top: 20.h, left: 20.w, right: 20.w),
-          decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
+          decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.black), borderRadius: BorderRadius.circular(10.w)),
           child: GridView.count(
-            crossAxisCount: 3,
+            crossAxisCount: iconUsed == 0 ? 3 : 2,
             children: buttonLists,
+          ),
+        ),
+        Positioned(
+          bottom: 50.h,
+          right: 110.w,
+          child: FloatingActionButton(
+            onPressed: changeIcon,
+            backgroundColor: Colors.white,
+            child: iconUsed == 0 ? smallGrid : largeGrid,
           ),
         ),
         Positioned(
@@ -146,6 +164,7 @@ class ListsPage extends StatelessWidget{
           right: 40.w,
           child: FloatingActionButton(
             onPressed: () => addAList(context),
+            backgroundColor: Colors.white,
             child: Icon(Icons.add),
           ),
         )

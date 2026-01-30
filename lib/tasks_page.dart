@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list/page_to_show_provider.dart';
 import 'package:todo_list/tasks_provider.dart';
+import 'package:todo_list/utils.dart';
 
 class TasksPage extends StatelessWidget{
   const TasksPage({super.key, required this.index, required this.name});
@@ -96,38 +97,12 @@ class TasksPage extends StatelessWidget{
     );
   }
 
-  void askConfirm(BuildContext context, int index) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text("Conferma eliminazione"),
-          content: Text("Sei sicuro di voler cancellare questa task?"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text("Annulla"),
-            ),
-            TextButton(
-              onPressed: () {
-                context.read<TasksProvider>().deleteATask(index, this.index);
-                Navigator.pop(context);
-              },
-              child: Text(
-                "Elimina",
-                style: TextStyle(color: Colors.red),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void showDetails(BuildContext context, String description, int index){
+    final pageContext = context;
+
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: Text("Task"),
           content: SingleChildScrollView(
@@ -139,8 +114,10 @@ class TasksPage extends StatelessWidget{
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context); // chiude il dialog dei dettagli
-                WidgetsBinding.instance.addPostFrameCallback((_) => askConfirm(context, index));
+                Navigator.pop(dialogContext); // chiude il dialog dei dettagli
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  Utils.askConfirm(context, "Sei sicuro di voler cancellare questa task?", () => pageContext.read<TasksProvider>().deleteATask(index, this.index));
+                });
               },
               child: Text("Elimina", style: TextStyle(color: Colors.red)),
             ),
@@ -168,8 +145,9 @@ class TasksPage extends StatelessWidget{
             height: 70.h,
             margin: EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
             decoration: BoxDecoration(
-              border: Border.all(width: 2.w, color: Colors.blue),
+              border: Border.all(width: 2.w, color: Utils.taskBorderColor),
               borderRadius: BorderRadius.circular(10.w),
+              color: Utils.taskColor,
             ),
             child: InkWell(
               onTap: () => showDetails(context, tasks[i].description, i),
@@ -181,6 +159,7 @@ class TasksPage extends StatelessWidget{
                       padding: EdgeInsets.only(left: 20.w),
                       child: Text(
                         tasks[i].description,
+                        style: Utils.textStyle,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -227,8 +206,9 @@ class TasksPage extends StatelessWidget{
                   Container(
                     width: 200.w,
                     margin: EdgeInsets.symmetric(vertical: 20.h),
-                    decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
-                    child: Center(child: Text(name)),
+                    padding: EdgeInsets.symmetric(horizontal: 10.w),
+                    decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.black), borderRadius: BorderRadius.circular(10.w), color: Colors.white),
+                    child: Center(child: Text(name, style: Utils.textStyle, overflow: TextOverflow.ellipsis,)),
                   ),
                 ],
               ),
@@ -236,7 +216,10 @@ class TasksPage extends StatelessWidget{
             rowTasks.isNotEmpty ? Container(
               constraints: BoxConstraints(minHeight: 500.h),
               margin: EdgeInsets.symmetric(horizontal: 20.w),
-              decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
+              decoration: BoxDecoration(
+                  border: BoxBorder.all(width: 2.w, color: Colors.black),
+                  borderRadius: BorderRadius.circular(10.w),
+              ),
               child: SingleChildScrollView(
                 child: Column(
                     children: rowTasks
@@ -245,11 +228,12 @@ class TasksPage extends StatelessWidget{
             ) : SizedBox()
           ],
         ),
-        rowTasks.isEmpty ? Positioned(top: 330.h, left: 130.w, child: Text("There is nothing here...")) : SizedBox(),
+        rowTasks.isEmpty ? Positioned(top: 330.h, left: 130.w, child: Text("There is nothing here...", style: Utils.textStyle)) : SizedBox(),
         Positioned(
           bottom: 50.h,
           right: 40.w,
           child: FloatingActionButton(
+            backgroundColor: Utils.floatingButtonColor,
             onPressed: () => addATask(context),
             child: Icon(Icons.add),
           ),

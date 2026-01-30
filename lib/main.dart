@@ -47,7 +47,15 @@ class MyApp extends StatelessWidget {
       builder: (_, child) => MaterialApp (
           title: 'Flutter Demo',
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            //colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+            scaffoldBackgroundColor: Colors.green[100],
+            tabBarTheme: TabBarThemeData(
+              labelColor: Colors.black,
+              unselectedLabelColor: Colors.black,
+              indicatorColor: Colors.black,
+            ),
+            appBarTheme: AppBarTheme(backgroundColor: Colors.green[200])
           ),
           home: child
       ),
@@ -76,6 +84,7 @@ class MyHomePage extends StatelessWidget {
       length: tabs.length,
       child: Scaffold(
         appBar: AppBar(
+          title: Center(child: Text("ToDo List")),
           bottom: TabBar(
             tabs: tabs,
           ),
