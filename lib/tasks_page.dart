@@ -9,66 +9,6 @@ class TasksPage extends StatelessWidget{
   final int index;
   final String name;
 
-  /*void addATask(BuildContext context) {
-    final TextEditingController controller = TextEditingController();
-    bool isError = false;
-    String label = "Descrizione Task";
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: Text("Nuova Task"),
-              content: TextField(
-                controller: controller,
-                decoration: InputDecoration(
-                  labelText: label,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: isError ? Colors.red : Colors.grey,
-                      width: 2,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: isError ? Colors.red : Colors.blue,
-                      width: 2,
-                    ),
-                  ),
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text("Annulla"),
-                ),
-                TextButton(
-                  onPressed: () {
-                    final description = controller.text.trim();
-
-                    if (name.isEmpty) {
-                      setState(() => isError = true);
-                      return;
-                    }else{
-                      if(!context.read<TasksProvider>().addATask(name, description)){
-                        return;
-                      }
-
-                    }
-                    Navigator.pop(context);
-                  },
-                  child: Text("Aggiungi"),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }*/
-
   void addATask(BuildContext context) {
     final TextEditingController controller = TextEditingController();
     bool isError = false;
@@ -144,7 +84,7 @@ class TasksPage extends StatelessWidget{
                       }
                     }
 
-                    Navigator.pop(context); // chiude il dialog principale
+                    Navigator.pop(context);
                   },
                   child: Text("Aggiungi"),
                 ),
@@ -156,6 +96,63 @@ class TasksPage extends StatelessWidget{
     );
   }
 
+  void askConfirm(BuildContext context, int index) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Conferma eliminazione"),
+          content: Text("Sei sicuro di voler cancellare questa task?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("Annulla"),
+            ),
+            TextButton(
+              onPressed: () {
+                context.read<TasksProvider>().deleteATask(index, this.index);
+                Navigator.pop(context);
+              },
+              child: Text(
+                "Elimina",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showDetails(BuildContext context, String description, int index){
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Task"),
+          content: SingleChildScrollView(
+            child: Text(
+              description,
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // chiude il dialog dei dettagli
+                WidgetsBinding.instance.addPostFrameCallback((_) => askConfirm(context, index));
+              },
+              child: Text("Elimina", style: TextStyle(color: Colors.red)),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("Chiudi"),
+            ),
+          ],
+        );
+      }
+    );
+  }
 
 
   @override
@@ -163,91 +160,90 @@ class TasksPage extends StatelessWidget{
     final provider = Provider.of<TasksProvider>(context);
     final tasks = provider.lists[index].tasks;
 
-    List<GestureDetector> rowTasks = [];
+    List<Container> rowTasks = [];
     for(int i = 0; tasks != null && i < tasks.length; i++){
       rowTasks.add(
-        GestureDetector(
-          onTap: () {},
-          child: Container(
-              width: 1.sw,
-              height: 70.h,
-              margin: EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
-              decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
-              child: Stack(
+          Container(
+            width: 1.sw,
+            height: 70.h,
+            margin: EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
+            decoration: BoxDecoration(
+              border: Border.all(width: 2.w, color: Colors.blue),
+              borderRadius: BorderRadius.circular(10.w),
+            ),
+            child: InkWell(
+              onTap: () => showDetails(context, tasks[i].description, i),
+              borderRadius: BorderRadius.circular(10.w),
+              child: Row(
                 children: [
-                  SizedBox(
-                    //decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
-                    width: 0.78.sw,
-                    child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 20.w),
-                          child: Text(tasks[i].description, overflow: TextOverflow.ellipsis),
-                        )
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 20.w),
+                      child: Text(
+                        tasks[i].description,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
-                  Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                          padding: EdgeInsets.only(right: 10.w),
-                          child: IgnorePointer( // così lascia l'animazione senza far diventare trasparente il pulsante
-                              ignoring: tasks[i].isCompleted,
-                              child: IconButton(
-                                icon: tasks[i].isCompleted ? Icon(Icons.check_box_rounded) : Icon(Icons.check_box_outline_blank_rounded),
-                                onPressed: () => provider.completeTask(listIndex: index, taskIndex: i),
-                              )
-                          )
-                      )
-                  )
+
+                  Padding(
+                    padding: EdgeInsets.only(right: 10.w),
+                    child: IgnorePointer(
+                      ignoring: tasks[i].isCompleted,
+                      child: IconButton(
+                        icon: tasks[i].isCompleted ? Icon(Icons.check_box_rounded) : Icon(Icons.check_box_outline_blank_rounded),
+                        onPressed: () => provider.completeTask(listIndex: index, taskIndex: i,),
+                      ),
+                    ),
+                  ),
                 ],
-              )
-          ),
-        )
+              ),
+            ),
+          )
+
       );
     }
 
     return Stack(
       children: [
-              Column(
+        Column(
+          children: [
+            SizedBox(
+              width: 1.sw,
+              height: 100.h,
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  SizedBox(
-                    width: 100.sw,
-                    height: 100.h,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Positioned(
-                          left: 10.w,
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: IconButton(
-                                icon: Icon(Icons.arrow_back_rounded, size: 30.w),
-                                onPressed: () => context.read<PageToShowProvider>().showLists(),
-                              ),
-                            )
+                  Positioned(
+                      left: 10.w,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: IconButton(
+                          icon: Icon(Icons.arrow_back_rounded, size: 30.w),
+                          onPressed: () => context.read<PageToShowProvider>().showLists(),
                         ),
-                        Container(
-                          width: 200.w,
-                          margin: EdgeInsets.symmetric(vertical: 20.h),
-                          decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
-                          child: Center(child: Text(name)),
-                        ),
-                      ],
-                    ),
+                      )
                   ),
                   Container(
-                    constraints: BoxConstraints(minHeight: 500.h),
-                    margin: EdgeInsets.symmetric(horizontal: 20.w),
+                    width: 200.w,
+                    margin: EdgeInsets.symmetric(vertical: 20.h),
                     decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: rowTasks
-                      ),
-                    ),
-                  )
+                    child: Center(child: Text(name)),
+                  ),
                 ],
-
-
+              ),
+            ),
+            rowTasks.isNotEmpty ? Container(
+              constraints: BoxConstraints(minHeight: 500.h),
+              margin: EdgeInsets.symmetric(horizontal: 20.w),
+              decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
+              child: SingleChildScrollView(
+                child: Column(
+                    children: rowTasks
+                ),
+              ),
+            ) : SizedBox()
+          ],
         ),
         rowTasks.isEmpty ? Positioned(top: 330.h, left: 130.w, child: Text("There is nothing here...")) : SizedBox(),
         Positioned(

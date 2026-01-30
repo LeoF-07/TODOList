@@ -109,23 +109,21 @@ class ListsPage extends StatelessWidget{
           GestureDetector(
               onTap: () => context.read<PageToShowProvider>().showTasks(i, lists[i].name),
               child: Container(
+                padding: EdgeInsets.only(top: 10.h, left: 10.w),
                 margin: EdgeInsets.all(5.w),
                 width: 30.w,
                 height: 100.h,
                 decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
-                child: Padding(
-                  padding: EdgeInsets.only(top: 10.h, left: 10.w),
-                  child: Stack(
-                    children: [
-                      Text(lists[i].name),
-                      Positioned(
-                        bottom: 1.h,
-                        right: 1.w,
-                        child: IconButton(onPressed: () => deleteAList(context, i), icon: Icon(Icons.dangerous_outlined)),
-                      )
-                    ],
+                child: Stack(
+                  children: [
+                    Text(lists[i].name),
+                    Positioned(
+                      bottom: 1.h,
+                      right: 1.w,
+                      child: IconButton(onPressed: () => deleteAList(context, i), icon: Icon(Icons.dangerous_outlined)),
+                    )
+                  ],
                 ),
-              )
             )
           )
       );

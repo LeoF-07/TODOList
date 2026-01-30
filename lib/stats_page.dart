@@ -51,34 +51,6 @@ class StatsPage extends StatelessWidget{
               ],
             ),
           )
-
-
-        /*Container(
-              width: 1.sw,
-              height: 30.h,
-              margin: EdgeInsets.symmetric(vertical: 10.h),
-              child: Stack(
-                children: [
-                  SizedBox(
-                    width: 0.78.sw,
-                    child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 20.w),
-                          child: Text(provider.lists[i].name, overflow: TextOverflow.ellipsis),
-                        )
-                    ),
-                  ),
-                  Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 20.w),
-                        child: numberOfTasks != 0 ? Text('$numberOfTasks/$completedTasks          ${completedTasks != 0 ? (numberOfTasks / completedTasks * 100) : 0}%') : Text('Empty List'),
-                      )
-                  )
-                ],
-              )
-          )*/
       );
     }
 
@@ -91,17 +63,15 @@ class StatsPage extends StatelessWidget{
             decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
             child: Row(
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 10.h,
-                    children: [
-                      Text('Total Tasks:'),
-                      Text('Completed Tasks:'),
-                      Text('Tasks to solve:'),
-                      Text('Percentage:'),
-                    ],
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 10.h,
+                  children: [
+                    Text('Total Tasks:'),
+                    Text('Completed Tasks:'),
+                    Text('Tasks to solve:'),
+                    Text('Percentage:'),
+                  ],
                 ),
 
                 Expanded(
@@ -121,7 +91,7 @@ class StatsPage extends StatelessWidget{
         ),
         Container(
           constraints: BoxConstraints(maxHeight: 500.h),
-          padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 20.h),
+          padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 10.h),
           margin: EdgeInsets.symmetric(horizontal: 20.w),
           decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Colors.blue), borderRadius: BorderRadius.circular(10.w)),
           child: Column(

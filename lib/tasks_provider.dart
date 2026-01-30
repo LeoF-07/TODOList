@@ -62,6 +62,18 @@ class TasksProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  void deleteATask(int index, int listIndex){
+    numberOfTasks--;
+    mapNumberOfTasks[lists[listIndex].name] = mapNumberOfTasks[lists[listIndex].name]! - 1;
+    if(lists[listIndex].tasks![index].isCompleted){
+      completedTasks--;
+      mapCompletedTasks[lists[listIndex].name] = mapCompletedTasks[lists[listIndex].name]! - 1;
+    }
+    lists[listIndex].tasks!.removeAt(index);
+    saveList(listIndex);
+    notifyListeners();
+  }
+
   void saveLists() {
     final box = Hive.box('todoBox');
     for(var list in lists){
