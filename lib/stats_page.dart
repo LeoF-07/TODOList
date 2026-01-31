@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:todo_list/tasks_provider.dart';
 import 'package:todo_list/utils.dart';
 
+// Mostra le statistiche generali
 class StatsPage extends StatelessWidget{
   const StatsPage({super.key});
 
@@ -35,7 +36,7 @@ class StatsPage extends StatelessWidget{
                     padding: EdgeInsets.only(left: 20.w),
                     child: Text(
                       provider.lists[i].name,
-                      style: Utils.textStyle,
+                      style: (numberOfTasks == 0 || percentage != "100.0") ? Utils.textStyle : Utils.completedListTextStyle,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),

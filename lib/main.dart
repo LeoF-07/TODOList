@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list/page_to_show_provider.dart';
@@ -64,6 +63,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
+// Classe principale che mostra i due Tab
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
@@ -98,10 +99,6 @@ class MyHomePage extends StatelessWidget {
               TasksPage(index: listIndex!, name: listName!),
               SingleStatsPage(index: listIndex!, name: listName!)
             ]
-            /*[
-              page == "Lists" ? ListsPage() : TasksPage(index: listIndex!, name: listName!),
-              page == "Lists" ? StatsPage() : SingleStatsPage(index: listIndex!, name: listName!)
-            ],*/
           ),
         ),
       ),

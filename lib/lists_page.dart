@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_list/page_to_show_provider.dart';
-import 'package:todo_list/tasks_page.dart';
 import 'package:todo_list/tasks_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list/utils.dart';
@@ -14,6 +13,7 @@ class ListsPage extends StatefulWidget{
 
 }
 
+// Mostra l'elenco delle liste. È stateful perché la larghezza delle liste può cambiare al click di un pulsante
 class ListsPageState extends State<ListsPage>{
 
   Icon largeGrid = Icon(Icons.grid_on_sharp);
@@ -154,10 +154,13 @@ class ListsPageState extends State<ListsPage>{
 
   @override
   Widget build(BuildContext context) {
-    final lists = Provider.of<TasksProvider>(context).lists;
+    final provider = Provider.of<TasksProvider>(context);
+    final lists = provider.lists;
 
     List<GestureDetector> buttonLists = [];
     for(int i = 0; i < lists.length; i++){
+      bool isCompleted = provider.mapNumberOfTasks[lists[i].name] != 0 && provider.mapNumberOfTasks[lists[i].name] == provider.mapCompletedTasks[lists[i].name];
+
       buttonLists.add(
           GestureDetector(
               onTap: () => context.read<PageToShowProvider>().showTasks(i, lists[i].name),
@@ -166,7 +169,12 @@ class ListsPageState extends State<ListsPage>{
                 margin: EdgeInsets.all(5.w),
                 width: 30.w,
                 height: 100.h,
-                decoration: BoxDecoration(border: BoxBorder.all(width: 2.w, color: Utils.listBorderColor), borderRadius: BorderRadius.circular(10.w), color: Utils.listColor),
+                decoration: BoxDecoration(
+                    border: BoxBorder.all(width: 2.w, color: !isCompleted ? Utils.listBorderColor : Utils.completedListColor),
+                    //border: BoxBorder.all(width: 2.w, color: Utils.listBorderColor),
+                    borderRadius: BorderRadius.circular(10.w),
+                    color: Utils.listColor
+                ),
 
                 child: Stack(
                   children: [
@@ -176,6 +184,7 @@ class ListsPageState extends State<ListsPage>{
                         Expanded(
                           child: Text(
                             lists[i].name,
+                            //style: !isCompleted ? Utils.textStyle : Utils.completedListTextStyle,
                             style: Utils.textStyle,
                             maxLines: iconUsed == 0 ? 2 : 4,
                             overflow: TextOverflow.ellipsis,

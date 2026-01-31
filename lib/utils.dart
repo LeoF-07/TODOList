@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
-import 'package:todo_list/tasks_provider.dart';
 
+// Classe Utils con alcune cose di comune utilizzo
 abstract class Utils{
 
   static Color listBorderColor = Colors.black;
@@ -13,6 +12,8 @@ abstract class Utils{
   static Color floatingButtonColor = Colors.white;
   static Color statsBorderColor = Colors.black;
   static Color statsColor = Colors.white;
+  static Color completedListColor = Colors.green;
+  static TextStyle completedListTextStyle = TextStyle(fontSize: 14.w, color: Colors.green);
   static TextStyle textStyle = TextStyle(fontSize: 14.w);
 
   static Container generalStats(int totalTasks, int completedTasks, int tasksToSolve, String percentage){

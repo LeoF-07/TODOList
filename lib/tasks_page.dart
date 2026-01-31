@@ -5,6 +5,7 @@ import 'package:todo_list/page_to_show_provider.dart';
 import 'package:todo_list/tasks_provider.dart';
 import 'package:todo_list/utils.dart';
 
+// Mostra l'elenco di task di una lista
 class TasksPage extends StatelessWidget{
   const TasksPage({super.key, required this.index, required this.name});
   final int index;

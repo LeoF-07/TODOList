@@ -1,3 +1,4 @@
+// Classe che rappresenta una Task
 class Task{
   Task({required this.description, this.isCompleted = false});
   String description;

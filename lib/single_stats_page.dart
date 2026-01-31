@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_list/task.dart';
 import 'package:todo_list/tasks_provider.dart';
 import 'package:todo_list/utils.dart';
 
+// Mostra le statistiche specifiche di una lista
 class SingleStatsPage extends StatelessWidget{
   const SingleStatsPage({super.key, required this.index, required this.name});
 

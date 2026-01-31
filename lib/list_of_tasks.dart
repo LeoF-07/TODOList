@@ -1,5 +1,6 @@
 import 'package:todo_list/task.dart';
 
+// Classe che rappresenta una Lista di Tasks
 class ListOfTasks{
   ListOfTasks({required this.id, required this.name, this.tasks});
   int id;
