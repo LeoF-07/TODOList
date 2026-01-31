@@ -3,7 +3,7 @@
 ToDo List - Salva i tuoi impegni o ciò che preferisci, organizzali in liste e spunta le Task quando le completi, ToDo List è l'app perfetta se non vuoi scordarti di nulla!
 
 ## Screenshots
-<img src="screenshots/screenshots.png" alt="Screenshots" width="700">
+<img src="screenshots/Screenshots.png" alt="Screenshots" width="700">
 
 ## Funzionamento
 
@@ -38,7 +38,7 @@ flutter doctor
 
 È possibile scaricare questo progetto selezionando il percorso desiderato dal prompt dei comandi e digitando:
 ```bash
-git clone https://github.com/LeoF-07/Briscola.git
+git clone https://github.com/LeoF-07/TODOList.git
 ```
 L'applicazione client funziona per i dispositivi Android.
 Se i [Requisiti](#Requisiti) sono rispettati sarà  possibile modificare il progetto con Android Studio o Visual Studio Code ed emularlo.
