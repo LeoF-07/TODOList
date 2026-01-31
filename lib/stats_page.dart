@@ -13,9 +13,9 @@ class StatsPage extends StatelessWidget{
     final provider = Provider.of<TasksProvider>(context);
     List lists = provider.lists;
     int totalTasks = provider.numberOfTasks;
-    int completedTasks = provider.completedTasks;
-    int tasksToSolve = totalTasks - completedTasks;
-    String percentage = (completedTasks / totalTasks * 100).toStringAsFixed(1);
+    int totalCompletedTasks = provider.completedTasks;
+    int tasksToSolve = totalTasks - totalCompletedTasks;
+    String percentage = (totalCompletedTasks / totalTasks * 100).toStringAsFixed(1);
 
     List<Widget> rowLists = [];
     for(int i = 0; i < lists.length; i++){
@@ -36,7 +36,7 @@ class StatsPage extends StatelessWidget{
                     padding: EdgeInsets.only(left: 20.w),
                     child: Text(
                       provider.lists[i].name,
-                      style: (numberOfTasks == 0 || percentage != "100.0") ? Utils.textStyle : Utils.completedListTextStyle,
+                      style: (numberOfTasks == 0 || (completedTasks / numberOfTasks * 100) < 100) ? Utils.textStyle : Utils.completedListTextStyle,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -63,7 +63,7 @@ class StatsPage extends StatelessWidget{
 
     return Column(
       children: [
-        Utils.generalStats(totalTasks, completedTasks, tasksToSolve, percentage),
+        Utils.generalStats(totalTasks, totalCompletedTasks, tasksToSolve, percentage),
         Align(
           alignment: Alignment.center,
           child: Text("Overview", style: Utils.textStyle),

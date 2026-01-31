@@ -3,7 +3,7 @@
 ToDo List - Salva i tuoi impegni o ciò che preferisci, organizzali in liste e spunta le Task quando le completi, ToDo List è l'app perfetta se non vuoi scordarti di nulla!
 
 ## Screenshots
-<img src="screenshots/examples.png" alt="Screenshots" width="700">
+<img src="screenshots/screenshots.png" alt="Screenshots" width="700">
 
 ## Funzionamento
 
