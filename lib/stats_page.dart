@@ -17,7 +17,8 @@ class StatsPage extends StatelessWidget{
     int tasksToSolve = totalTasks - totalCompletedTasks;
     String percentage = (totalCompletedTasks / totalTasks * 100).toStringAsFixed(1);
 
-    List<Widget> rowLists = [];
+    List<Container> rowLists = [];
+    // Ciclo che riempie rowLists; è una lista che contiene Container per ogni lista con nome, taskCompletate/taskTotali e la percentuale
     for(int i = 0; i < lists.length; i++){
       int numberOfTasks = provider.mapNumberOfTasks[lists[i].name]!;
       int completedTasks = provider.mapCompletedTasks[lists[i].name]!;
@@ -27,21 +28,24 @@ class StatsPage extends StatelessWidget{
             height: 30.h,
             margin: EdgeInsets.symmetric(vertical: 10.h),
             child: Row(
+              spacing: 5.w,
               children: [
                 SizedBox(width: 5.w),
                 Icon(Icons.circle, size: 10.w, color: Utils.pointColor),
-                SizedBox(width: 5.w),
+                // SizedBox(width: 5.w),
+                // I due expanded occupano tutto lo spazio disponibile
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.only(left: 20.w),
                     child: Text(
                       provider.lists[i].name,
+                      // Se la lista è completata il nome viene mostrato in verde
                       style: (numberOfTasks == 0 || (completedTasks / numberOfTasks * 100) < 100) ? Utils.textStyle : Utils.completedListTextStyle,
-                      overflow: TextOverflow.ellipsis,
+                      overflow: TextOverflow.ellipsis, // ...
                     ),
                   ),
                 ),
-
+                // Mostra il testo con le statistiche
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.only(right: 20.w),
@@ -63,11 +67,13 @@ class StatsPage extends StatelessWidget{
 
     return Column(
       children: [
+        // restituisce un Container con le statistiche generali (passate come parametri)
         Utils.generalStats(totalTasks, totalCompletedTasks, tasksToSolve, percentage),
         Align(
           alignment: Alignment.center,
           child: Text("Overview", style: Utils.textStyle),
         ),
+        // Elenco di tutte le liste
         Container(
           constraints: BoxConstraints(maxHeight: 480.h),
           padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 10.h),

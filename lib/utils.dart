@@ -52,6 +52,71 @@ abstract class Utils{
     );
   }
 
+  static void manageAList(BuildContext context, String text, Function function, {int i = -1}){
+    TextEditingController controller = TextEditingController();
+    bool isError = false;
+    String label = "Nome della lista";
+
+    showDialog(
+      context: context,
+      builder: (_) {
+        return StatefulBuilder(
+          builder: (_, setState) {
+            return AlertDialog(
+              title: Text(text),
+              content: TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  labelText: label,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: isError ? Colors.red : Colors.grey,
+                      width: 2,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: isError ? Colors.red : Colors.blue,
+                      width: 2,
+                    ),
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text("Annulla"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    final name = controller.text.trim();
+
+                    if (name.isEmpty) {
+                      setState(() => isError = true);
+                      return;
+                    }else if(i != -1){
+                      if(!function(name, i)){
+                        setState(() {isError = true; label = "Lista già esistente"; controller.text = "";});
+                        return;
+                      }
+                    }else{
+                      if(!function(name)){
+                        setState(() {isError = true; label = "Lista già esistente"; controller.text = "";});
+                        return;
+                      }
+                    }
+                    Navigator.pop(context);
+                  },
+                  child: Text(text),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   static void askConfirm(BuildContext context, String text, Function function){
     showDialog(
       context: context,

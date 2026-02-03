@@ -12,15 +12,15 @@ class TasksPage extends StatelessWidget{
   final String name;
 
   void addATask(BuildContext context) {
-    final TextEditingController controller = TextEditingController();
+    TextEditingController controller = TextEditingController();
     bool isError = false;
     String label = "Descrizione Task";
 
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (_) {
         return StatefulBuilder(
-          builder: (context, setState) {
+          builder: (_, setState) {
             return AlertDialog(
               title: Text("Nuova Task"),
               content: TextField(
@@ -55,19 +55,19 @@ class TasksPage extends StatelessWidget{
                       return;
                     }
 
+                    // Se è già presente una task viene mostrato un altro dialog che chiede conferma
                     if (!context.read<TasksProvider>().addATask(index, description)) {
                       bool? confirm = await showDialog<bool>(
                         context: context,
-                        builder: (context) {
+                        builder: (_) {
                           return AlertDialog(
                             title: Text("Task già esistente"),
                             content: Text(
-                              "Esiste già una task con questa descrizione.\n"
-                                  "Vuoi aggiungerla comunque?",
+                              "Esiste già una task con questa descrizione.\nVuoi aggiungerla comunque?",
                             ),
                             actions: [
                               TextButton(
-                                onPressed: () => Navigator.pop(context, false),
+                                onPressed: () => Navigator.pop(context, false), // ritorna un booleano dal pop che viene memorizzato su confirm
                                 child: Text("No"),
                               ),
                               TextButton(
@@ -99,8 +99,7 @@ class TasksPage extends StatelessWidget{
   }
 
   void showDetails(BuildContext context, String description, int index){
-    final pageContext = context;
-
+    // Dialog che mostra i dettagli della task e consente anche di eliminarla
     showDialog(
       context: context,
       builder: (dialogContext) {
@@ -117,7 +116,7 @@ class TasksPage extends StatelessWidget{
               onPressed: () {
                 Navigator.pop(dialogContext); // chiude il dialog dei dettagli
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  Utils.askConfirm(context, "Sei sicuro di voler cancellare questa task?", () => pageContext.read<TasksProvider>().deleteATask(index, this.index));
+                  Utils.askConfirm(context, "Sei sicuro di voler cancellare questa task?", () => context.read<TasksProvider>().deleteATask(index, this.index));
                 });
               },
               child: Text("Elimina", style: TextStyle(color: Colors.red)),
@@ -150,24 +149,27 @@ class TasksPage extends StatelessWidget{
               borderRadius: BorderRadius.circular(10.w),
               color: Utils.taskColor,
             ),
+            // InkWell è utile se si vuole far si che prenda i click sull'intero container ma lasci passare i click a un elemento interno, come l'IconButton sotto
             child: InkWell(
               onTap: () => showDetails(context, tasks[i].description, i),
               borderRadius: BorderRadius.circular(10.w),
               child: Row(
                 children: [
+                  // Il nome della task occupa tutto lo spazio dispnibile
                   Expanded(
                     child: Padding(
                       padding: EdgeInsets.only(left: 20.w),
                       child: Text(
                         tasks[i].description,
                         style: Utils.textStyle,
-                        overflow: TextOverflow.ellipsis,
+                        overflow: TextOverflow.ellipsis, // ...
                       ),
                     ),
                   ),
 
                   Padding(
                     padding: EdgeInsets.only(right: 10.w),
+                    // IgnorePointer abbinato a InkWell consente di gestire i click sia del container sia dell'IconButton interno
                     child: IgnorePointer(
                       ignoring: tasks[i].isCompleted,
                       child: IconButton(
@@ -191,6 +193,7 @@ class TasksPage extends StatelessWidget{
             SizedBox(
               width: 1.sw,
               height: 100.h,
+              // Stack che contiene una freccia per tornare indietro e un container con il nome della lista
               child: Stack(
                 alignment: Alignment.center,
                 children: [
@@ -229,6 +232,7 @@ class TasksPage extends StatelessWidget{
             ) : SizedBox()
           ],
         ),
+        // Devo metterlo qui perché deve stare dentro uno stack
         rowTasks.isEmpty ? Positioned(top: 330.h, left: 130.w, child: Text("There is nothing here...", style: Utils.textStyle)) : SizedBox(),
         Positioned(
           bottom: 50.h,

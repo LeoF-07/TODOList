@@ -31,137 +31,24 @@ class ListsPageState extends State<ListsPage>{
   }
 
   void changeName(BuildContext context, int i){
-    final TextEditingController controller = TextEditingController();
-    bool isError = false;
-    String label = "Nome della lista";
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: Text("Rinomina"),
-              content: TextField(
-                controller: controller,
-                decoration: InputDecoration(
-                  labelText: label,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: isError ? Colors.red : Colors.grey,
-                      width: 2,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: isError ? Colors.red : Colors.blue,
-                      width: 2,
-                    ),
-                  ),
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text("Annulla"),
-                ),
-                TextButton(
-                  onPressed: () {
-                    final name = controller.text.trim();
-
-                    if (name.isEmpty) {
-                      setState(() => isError = true);
-                      return;
-                    }else{
-                      if(!context.read<TasksProvider>().renameList(name, i)){
-                        setState(() {isError = true; label = "Lista già esistente"; controller.text = "";});
-                        return;
-                      }
-
-                    }
-                    Navigator.pop(context);
-                  },
-                  child: Text("Rinomina"),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
+    Utils.manageAList(context, "Rinomina lista", (name, i) => context.read<TasksProvider>().renameList(name, i), i: i);
   }
 
   void addAList(BuildContext context) {
-    final TextEditingController controller = TextEditingController();
-    bool isError = false;
-    String label = "Nome della lista";
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: Text("Nuova lista"),
-              content: TextField(
-                controller: controller,
-                decoration: InputDecoration(
-                  labelText: label,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: isError ? Colors.red : Colors.grey,
-                      width: 2,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: isError ? Colors.red : Colors.blue,
-                      width: 2,
-                    ),
-                  ),
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text("Annulla"),
-                ),
-                TextButton(
-                  onPressed: () {
-                    final name = controller.text.trim();
-
-                    if (name.isEmpty) {
-                      setState(() => isError = true);
-                      return;
-                    }else{
-                      if(!context.read<TasksProvider>().addAList(name)){
-                        setState(() {isError = true; label = "Lista già esistente"; controller.text = "";});
-                        return;
-                      }
-
-                    }
-                    Navigator.pop(context);
-                  },
-                  child: Text("Aggiungi"),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
+    Utils.manageAList(context, "Aggiungi lista", (name) => context.read<TasksProvider>().addAList(name));
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<TasksProvider>(context);
-    final lists = provider.lists;
+    List lists = provider.lists;
 
     List<GestureDetector> buttonLists = [];
     for(int i = 0; i < lists.length; i++){
       bool isCompleted = provider.mapNumberOfTasks[lists[i].name] != 0 && provider.mapNumberOfTasks[lists[i].name] == provider.mapCompletedTasks[lists[i].name];
 
       buttonLists.add(
+          // Ogni lista è un GestureDetector che se cliccata ti mostra le tasks
           GestureDetector(
               onTap: () => context.read<PageToShowProvider>().showTasks(i, lists[i].name),
               child: Container(
@@ -181,13 +68,14 @@ class ListsPageState extends State<ListsPage>{
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Il testo occupa a partire da sinistra tutto lo spazio disponibile
                         Expanded(
                           child: Text(
                             lists[i].name,
                             //style: !isCompleted ? Utils.textStyle : Utils.completedListTextStyle,
                             style: Utils.textStyle,
                             maxLines: iconUsed == 0 ? 2 : 4,
-                            overflow: TextOverflow.ellipsis,
+                            overflow: TextOverflow.ellipsis, // ...
                             softWrap: true,
                           ),
                         ),
@@ -216,6 +104,7 @@ class ListsPageState extends State<ListsPage>{
 
     return Stack(
       children: [
+        // Container con le liste
         Container(
           constraints: BoxConstraints(maxHeight: 590.h),
           padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 10.h),
@@ -226,6 +115,7 @@ class ListsPageState extends State<ListsPage>{
             children: buttonLists,
           ),
         ),
+        // FloatingActionButton che cambia la visualizzazione tra griglia grande e piccola
         Positioned(
           bottom: 50.h,
           right: 110.w,
@@ -235,6 +125,7 @@ class ListsPageState extends State<ListsPage>{
             child: iconUsed == 0 ? smallGrid : largeGrid,
           ),
         ),
+        // FloatingActionButton che aggiunge una lista
         Positioned(
           bottom: 50.h,
           right: 40.w,

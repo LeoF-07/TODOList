@@ -15,9 +15,16 @@ class TasksProvider extends ChangeNotifier{
   int numberOfTasks = 0;
   int completedTasks = 0;
 
+  /*
+  Queste due mappe contengono i nomi delle liste mappate ai loro numeri di task e di task completate,
+  Rende più facile accedere a questi dati perché essendo che presumibilmente le statistiche si visualizzano molte volte,
+  non sarebbe efficiente ogni volta fare la conta.
+  I metodi addATask, deleteATask ecc. gestiscono questi dati una volta sola.
+  */
   Map<String, int> mapNumberOfTasks = {};
   Map<String, int> mapCompletedTasks = {};
 
+  // Force se forzo la creazione di una task che esiste già (vedi tasks_page)
   bool addATask(int index, String description, {force = false}){
     if(lists[index].tasks == null){
       lists[index].tasks = [];
@@ -67,7 +74,7 @@ class TasksProvider extends ChangeNotifier{
       }
     }
     lists.insert(0, ListOfTasks(id: id, name: name, tasks: tasks));
-    id++;
+    id++; // L'id corrisponde sempre all'id della task aggiunta per ultima + 1, vedi loadLists()
     saveList(0);
     mapNumberOfTasks[lists[0].name] = 0;
     mapCompletedTasks[lists[0].name] = 0;
@@ -98,6 +105,18 @@ class TasksProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  void completeTask({required int listIndex, required int taskIndex}){
+    lists[listIndex].tasks![taskIndex].complete();
+    saveList(listIndex);
+    completedTasks++;
+    mapCompletedTasks[lists[listIndex].name] = mapCompletedTasks[lists[listIndex].name]! + 1;
+    notifyListeners();
+  }
+
+  /*
+  Non salvo la lista di liste direttamente, ma salvo le singole liste con i loro nomi come chiave in modo che le
+  operazioni di salvataggio avvengano in modo più efficiente senza coinvolgere ogni volta tutte le liste
+  */
   void saveLists() {
     final box = Hive.box('todoBox');
     for(var list in lists){
@@ -118,6 +137,7 @@ class TasksProvider extends ChangeNotifier{
       saveLists();
     } else {
       lists = box.values.map((m) => ListOfTasks.fromMap(m as Map)).toList();
+      // Ogni lista di tasks ha il proprio id in modo che quando vengono caricate possano essere riordinate in base a come sono state inserite
       lists.sort((a, b) => b.id.compareTo(a.id));
     }
     id = lists.last.id + 1;
@@ -138,14 +158,6 @@ class TasksProvider extends ChangeNotifier{
       mapCompletedTasks[lists[i].name] = completedTasks;
     }
 
-    notifyListeners();
-  }
-
-  void completeTask({required int listIndex, required int taskIndex}){
-    lists[listIndex].tasks![taskIndex].complete();
-    saveList(listIndex);
-    completedTasks++;
-    mapCompletedTasks[lists[listIndex].name] = mapCompletedTasks[lists[listIndex].name]! + 1;
     notifyListeners();
   }
 }

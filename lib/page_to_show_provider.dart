@@ -13,8 +13,8 @@ class PageToShowProvider extends ChangeNotifier{
 
   void showTasks(int i, String list){
     page = "Tasks";
-    index = i;
-    listName = list;
+    index = i; // indice della lista nella "lista di liste"
+    listName = list; // nome della lista
     notifyListeners();
   }
 }

@@ -20,8 +20,9 @@ class SingleStatsPage extends StatelessWidget{
     int tasksToSolve = totalTasks - completedTasks;
     String percentage = (completedTasks / totalTasks * 100).toStringAsFixed(1);
 
-    final tasks = provider.lists[index].tasks;
+    List? tasks = provider.lists[index].tasks;
     List<Widget> rowTasks = [];
+    // Ciclo che riempie rowTasks; è una Lista che contiene tutte le tasks che mancano da fare, utile per l'utente che vuole sapere cosa gli manca
     for (int i = 0; tasks != null && i < tasks.length; i++) {
       if (tasks[i].isCompleted) {
         continue;
@@ -32,10 +33,12 @@ class SingleStatsPage extends StatelessWidget{
             height: 30.h,
             margin: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
             child: Row(
+              //spacing: 5.w,
               children: [
                 SizedBox(width: 5.w),
-                Icon(Icons.circle, size: 10.w, color: Utils.pointColor),
+                Icon(Icons.circle, size: 10.w, color: Utils.pointColor), // Pallino
                 SizedBox(width: 5.w),
+                // Il testo occupa tutto lo spazio disponibile
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.only(left: 20.w),
@@ -58,11 +61,13 @@ class SingleStatsPage extends StatelessWidget{
     else if(rowTasks.isNotEmpty){
       return Column(
         children: [
+          // restituisce un Container con le statistiche generali (passate come parametri)
           Utils.generalStats(totalTasks, completedTasks, tasksToSolve, percentage),
           Align(
             alignment: Alignment.center,
             child: Text("Tasks to solve", style: Utils.textStyle,),
           ),
+          // Container con le tasks da fare, viene mostrato solo se la condizione dell'if è verificata giustamente
           Container(
               constraints: BoxConstraints(maxHeight: 480.h),
               padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 10.h),
